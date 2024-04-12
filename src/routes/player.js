@@ -58,6 +58,22 @@ const findPlayer = (req, res) => {
     return false;
 }
 
+const findRoom = (req, res) => {
+    if (rooms === {}) {
+        res.status(200).send({message: false});
+        return false;
+    }
+    const { roomKey } = req.body;
+
+    if (roomKey in rooms) {
+        res.status(200).send({message: true});
+        return true;
+    }
+
+    res.status(200).send({message: false});
+    return false;
+}
+
 const getPlayerState = (req, res) => {
     const { roomKey } = req.body;
 
@@ -110,6 +126,7 @@ router.get("/getAllRooms", getAllRooms);
 router.post("/getState", getPlayerState);
 router.post("/addPlayer", addPlayer);
 router.post("/findPlayer", findPlayer);
+router.post("/findRoom", findRoom);
 router.post('/updateState', updatePlayerState);
 router.post("/deletePlayer", deletePlayer);
 router.post("/deleteRoom", deleteRoom);
