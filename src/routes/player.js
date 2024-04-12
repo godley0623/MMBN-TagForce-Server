@@ -16,10 +16,14 @@ const roomExample = {
 }
 
 const addPlayer = (req, res) => {
-    const { roomKey } = req.body;
-    console.log(req.body);
-    players[roomKey] = "waiting";
-    res.status(200).send({message: `Player Added in room: ${roomKey}`});
+    if ("roomKey" in req.body) {
+        const { roomKey } = req.body;
+        console.log(req.body);
+        players[roomKey] = "waiting";
+        res.status(200).send({message: `Player Added in room: ${roomKey}`});
+    } else {
+        res.status(200).send({message: `"roomKey" key was not found in body`});
+    }
 }
 
 const getAllPlayers = (req, res) => {
