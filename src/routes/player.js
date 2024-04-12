@@ -16,9 +16,9 @@ const roomExample = {
 }
 
 const addPlayer = (req, res) => {
-    const playerInfo = req.body;
-    players[playerInfo.roomKey] = "waiting";
-    res.status(200).send({message: "Player Added"});
+    const { roomKey } = req.body;
+    players[roomKey] = "waiting";
+    res.status(200).send({message: `Player Added in room: ${roomKey}`});
 }
 
 const getAllPlayers = (req, res) => {
