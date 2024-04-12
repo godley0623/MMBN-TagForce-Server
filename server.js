@@ -14,8 +14,6 @@ const port = 4000;//process.env.PORT || 7000;
 app.use('/player', playerRoute);
 app.use('/version', versionRoute);
 
-export const players = [];
-
 app.listen(port);
 
 console.log(`Server is running on Port: ${port}`);
