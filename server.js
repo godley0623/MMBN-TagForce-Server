@@ -9,7 +9,7 @@ import { router as versionRoute } from './src/routes/version.js';
 dotenv.config();
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 const port = 4000;//process.env.PORT || 7000;
 
 app.use('/player', playerRoute);
