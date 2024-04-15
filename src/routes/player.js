@@ -121,12 +121,33 @@ const deleteRoom = (req, res) => {
     }
 }
 
+const updateRoom = (req, res) => {
+    const { roomKey, player, type, data } = req.body;
+    let d;
+
+    if (roomKey in rooms) {
+        if (data.includes("int[]")){
+            let stringData = data.slice(5);
+            let arrayData = stringData.split(",");
+            for (let i = 0; i<arrayData.length; i++) {
+                arrayData[i] = Number(arrayData[i]);
+            }
+            d = arrayData;
+        }
+        rooms[roomKey][player][type] = d;
+        res.status(200).send( {message: "room updated"} );
+    } else {
+        res.status(200).send( {message: "room not found"} );
+    }
+}
+
 router.get("/getAllPlayers", getAllPlayers);
 router.get("/getAllRooms", getAllRooms);
 router.post("/getState", getPlayerState);
 router.post("/addPlayer", addPlayer);
 router.post("/findPlayer", findPlayer);
 router.post("/findRoom", findRoom);
+router.post("/updateRoom", updateRoom);
 router.post('/updateState', updatePlayerState);
 router.post("/deletePlayer", deletePlayer);
 router.post("/deleteRoom", deleteRoom);
