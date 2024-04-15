@@ -141,9 +141,36 @@ const updateRoom = (req, res) => {
     }
 }
 
+const characterCheck = (req, res) => {
+    const { roomKey, player } = req.body;
+
+    if (roomKey in rooms) {
+        if ("characters" in rooms[roomKey][player]) {
+            res.status(200).send( {message: true} );
+        } else {
+            res.status(200).send( {message: false} );
+        }
+    } else {
+        res.status(200).send( {message: "room does not exist"} );
+    }
+}
+
+const getPlayerData = (req, res) => {
+    const { roomKey, player, type } = req.body;
+
+    if (roomKey in rooms) {
+        res.status(200);
+        res.send(rooms[roomKey][player][type]);
+    } else {
+        res.status(200).send( {message: "room does not exist"} );
+    }
+}
+
 router.get("/getAllPlayers", getAllPlayers);
 router.get("/getAllRooms", getAllRooms);
 router.post("/getState", getPlayerState);
+router.post("/getPlayerData", getPlayerData);
+router.post("/characterCheck", characterCheck);
 router.post("/addPlayer", addPlayer);
 router.post("/findPlayer", findPlayer);
 router.post("/findRoom", findRoom);
