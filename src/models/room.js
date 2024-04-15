@@ -7,5 +7,5 @@ const roomSchema = new Schema({
     player2: { type: Object }
 })
 
-const room = mongoose.model('room', roomSchema);
-export default room;
+const Room = mongoose.model('room', roomSchema);
+export default Room;

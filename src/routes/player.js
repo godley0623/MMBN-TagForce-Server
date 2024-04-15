@@ -1,4 +1,6 @@
 import express from 'express';
+import Player from "../models/player.js";
+import Room from "../models/room.js";
 
 export const router = express.Router();
 const players = {};
@@ -15,14 +17,22 @@ const roomExample = {
     player2: {},
 }
 
-const addPlayer = (req, res) => {
-    if ("roomKey" in req.body) {
-        const { roomKey } = req.body;
-        console.log(req.body);
-        players[roomKey] = "waiting";
+const addPlayer = async (req, res) => {
+    // if ("roomKey" in req.body) {
+    //     const { roomKey } = req.body;
+    //     console.log(req.body);
+    //     players[roomKey] = "waiting";
+    //     res.status(200).send({message: `Player Added in room: ${roomKey}`});
+    // } else {
+    //     res.status(200).send({message: `"roomKey" key was not found in body`});
+    // }
+
+    const { roomKey } = req.body;
+    try {
+        await Player.create( {roomKey: roomKey} );
         res.status(200).send({message: `Player Added in room: ${roomKey}`});
-    } else {
-        res.status(200).send({message: `"roomKey" key was not found in body`});
+    } catch (err) {
+        res.status(404).send({message: `"roomKey" key was not found in body`});
     }
 }
 
@@ -99,14 +109,22 @@ const updatePlayerState = (req, res) => {
     }
 }
 
-const deletePlayer = (req, res) => {
-    const { roomKey } = req.body;
+const deletePlayer = async (req, res) => {
+    // const { roomKey } = req.body;
 
-    if (roomKey in players) {
-        delete players[roomKey];
-        res.status(200).send( {message: "player removed from host queue"} );
-    } else {
-        res.status(200).send( {message: "player not found in host queue"} );
+    // if (roomKey in players) {
+    //     delete players[roomKey];
+    //     res.status(200).send( {message: "player removed from host queue"} );
+    // } else {
+    //     res.status(200).send( {message: "player not found in host queue"} );
+    // }
+
+    const { roomKey } = req.body;
+    try {
+        await Player.findOneAndDelete( {roomKey: roomKey} );
+        res.status(200).send( {message: "player was removed from host queue"} );
+    } catch (err) {
+        res.status(404).send( {message: "player was not found in host queue"} );
     }
 }
 

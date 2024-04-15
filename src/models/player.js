@@ -5,5 +5,5 @@ const playerSchema = new Schema({
     roomKey: { type: String }
 })
 
-const player = mongoose.model('player', playerSchema);
-export default player;
+const Player = mongoose.model('player', playerSchema);
+export default Player;
