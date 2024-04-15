@@ -124,12 +124,29 @@ const deleteRoom = async (req, res) => {
     }
 }
 
-const updateRoom = (req, res) => {
+const updateRoom = async (req, res) => {
+    // const { roomKey, player, type, data } = req.body;
+    // let d;
+
+    // if (roomKey in rooms) {
+    //     if (data.includes("int[]")){
+    //         let stringData = data.slice(5);
+    //         let arrayData = stringData.split(",");
+    //         for (let i = 0; i<arrayData.length; i++) {
+    //             arrayData[i] = Number(arrayData[i]);
+    //         }
+    //         d = arrayData;
+    //     }
+    //     rooms[roomKey][player][type] = d;
+    //     res.status(200).send( {message: "room updated"} );
+    // } else {
+    //     res.status(200).send( {message: "room not found"} );
+    // }
+
     const { roomKey, player, type, data } = req.body;
     let d;
-
-    if (roomKey in rooms) {
-        if (data.includes("int[]")){
+    try {
+       if (data.includes("int[]")){
             let stringData = data.slice(5);
             let arrayData = stringData.split(",");
             for (let i = 0; i<arrayData.length; i++) {
@@ -137,10 +154,15 @@ const updateRoom = (req, res) => {
             }
             d = arrayData;
         }
-        rooms[roomKey][player][type] = d;
+
+        const filter = { roomKey: roomKey };
+        const set = `${player}.${type}`;
+        const update = { $set: {} };
+        update["$set"][set] = d;
+        await Room.findOneAndUpdate(filter, update);
         res.status(200).send( {message: "room updated"} );
-    } else {
-        res.status(200).send( {message: "room not found"} );
+    } catch (err) {
+        res.status(404).send( {message: "Connection Error occured"} );
     }
 }
 
