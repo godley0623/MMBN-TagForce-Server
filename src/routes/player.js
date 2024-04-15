@@ -28,8 +28,6 @@ const addPlayer = async (req, res) => {
 }
 
 const getAllPlayers = async (req, res) => {
-    // res.status(200);
-    // res.send(players);
     try {
         const response = await Player.find({});
         res.status(200).send(response);
@@ -39,8 +37,6 @@ const getAllPlayers = async (req, res) => {
 }
 
 const getAllRooms = async (req, res) => {
-    // res.status(200);
-    // res.send(rooms);
     try {
         const response = await Room.find({});
         res.status(200).send(response);
@@ -49,26 +45,44 @@ const getAllRooms = async (req, res) => {
     }
 }
 
-const findPlayer = (req, res) => {
-    if (players === {}) {
-        res.status(200).send({message: false});
-        return false;
+const findPlayer = async (req, res) => {
+    // if (players === {}) {
+    //     res.status(200).send({message: false});
+    //     return false;
+    // }
+    // const playerInfo = req.body;
+    // const room = {};
+
+    // if (playerInfo.roomKey in players) {
+    //     room["player1"] = {"state": "Idle"};
+    //     room["player2"] = {"state": "Idle"};
+
+    //     delete players[playerInfo.roomKey];
+    //     rooms[playerInfo.roomKey] = room;
+    //     res.status(200).send({message: true});
+    //     return true;
+    // }
+
+    // res.status(200).send({message: false});
+    // return false;
+
+    const { roomKey } = req.body;
+    try {
+        const response = await Player.findOne( {roomKey: roomKey} );
+        if (response) {
+            await Player.findOneAndDelete( {roomKey: roomKey} );
+            await Room.create( {
+                roomKey: roomKey,
+                player1: {state: "Idle"},
+                player2: {state: "Idle"}
+            } );
+            res.status(200).send( {message: `Room: ${roomKey} was created`} );
+        } else {
+            res.status(404).send( {message: "Room was not found"} );
+        }
+    } catch (err) {
+        res.status(404).send( {message: "Connection Error has occured"} );
     }
-    const playerInfo = req.body;
-    const room = {};
-
-    if (playerInfo.roomKey in players) {
-        room["player1"] = {"state": "Idle"};
-        room["player2"] = {"state": "Idle"};
-
-        delete players[playerInfo.roomKey];
-        rooms[playerInfo.roomKey] = room;
-        res.status(200).send({message: true});
-        return true;
-    }
-
-    res.status(200).send({message: false});
-    return false;
 }
 
 const findRoom = (req, res) => {
@@ -122,14 +136,13 @@ const deletePlayer = async (req, res) => {
     }
 }
 
-const deleteRoom = (req, res) => {
+const deleteRoom = async (req, res) => {
     const { roomKey } = req.body;
-
-    if (roomKey in rooms) {
-        delete rooms[roomKey];
-        res.status(200).send( {message: "room removed"} );
-    } else {
-        res.status(200).send( {message: "room not found"} );
+    try {
+        await Room.findOneAndDelete( {roomKey: roomKey} );
+        res.status(200).send( {message: "Room was removed from the database"} );
+    } catch (err) {
+        res.status(404).send( {message: "Room was not found in database"} );
     }
 }
 
