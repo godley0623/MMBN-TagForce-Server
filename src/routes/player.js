@@ -18,15 +18,6 @@ const roomExample = {
 }
 
 const addPlayer = async (req, res) => {
-    // if ("roomKey" in req.body) {
-    //     const { roomKey } = req.body;
-    //     console.log(req.body);
-    //     players[roomKey] = "waiting";
-    //     res.status(200).send({message: `Player Added in room: ${roomKey}`});
-    // } else {
-    //     res.status(200).send({message: `"roomKey" key was not found in body`});
-    // }
-
     const { roomKey } = req.body;
     try {
         await Player.create( {roomKey: roomKey} );
@@ -36,14 +27,26 @@ const addPlayer = async (req, res) => {
     }
 }
 
-const getAllPlayers = (req, res) => {
-    res.status(200);
-    res.send(players);
+const getAllPlayers = async (req, res) => {
+    // res.status(200);
+    // res.send(players);
+    try {
+        const response = Player.find({});
+        res.status(200).send(response);
+    } catch (err) {
+        res.status(404).send( {message: "Players in queue could not be found"} );
+    }
 }
 
-const getAllRooms = (req, res) => {
-    res.status(200);
-    res.send(rooms);
+const getAllRooms = async (req, res) => {
+    // res.status(200);
+    // res.send(rooms);
+    try {
+        const response = Room.find({});
+        res.status(200).send(response);
+    } catch (err) {
+        res.status(404).send( {message: "The list of rooms could not be found"} );
+    }
 }
 
 const findPlayer = (req, res) => {
@@ -110,15 +113,6 @@ const updatePlayerState = (req, res) => {
 }
 
 const deletePlayer = async (req, res) => {
-    // const { roomKey } = req.body;
-
-    // if (roomKey in players) {
-    //     delete players[roomKey];
-    //     res.status(200).send( {message: "player removed from host queue"} );
-    // } else {
-    //     res.status(200).send( {message: "player not found in host queue"} );
-    // }
-
     const { roomKey } = req.body;
     try {
         await Player.findOneAndDelete( {roomKey: roomKey} );
