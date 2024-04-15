@@ -31,7 +31,7 @@ const getAllPlayers = async (req, res) => {
     // res.status(200);
     // res.send(players);
     try {
-        const response = Player.find({});
+        const response = await Player.find({});
         res.status(200).send(response);
     } catch (err) {
         res.status(404).send( {message: "Players in queue could not be found"} );
@@ -42,7 +42,7 @@ const getAllRooms = async (req, res) => {
     // res.status(200);
     // res.send(rooms);
     try {
-        const response = Room.find({});
+        const response = await Room.find({});
         res.status(200).send(response);
     } catch (err) {
         res.status(404).send( {message: "The list of rooms could not be found"} );
