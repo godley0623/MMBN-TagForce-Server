@@ -46,26 +46,6 @@ const getAllRooms = async (req, res) => {
 }
 
 const findPlayer = async (req, res) => {
-    // if (players === {}) {
-    //     res.status(200).send({message: false});
-    //     return false;
-    // }
-    // const playerInfo = req.body;
-    // const room = {};
-
-    // if (playerInfo.roomKey in players) {
-    //     room["player1"] = {"state": "Idle"};
-    //     room["player2"] = {"state": "Idle"};
-
-    //     delete players[playerInfo.roomKey];
-    //     rooms[playerInfo.roomKey] = room;
-    //     res.status(200).send({message: true});
-    //     return true;
-    // }
-
-    // res.status(200).send({message: false});
-    // return false;
-
     const { roomKey } = req.body;
     try {
         const response = await Player.findOne( {roomKey: roomKey} );
@@ -85,20 +65,18 @@ const findPlayer = async (req, res) => {
     }
 }
 
-const findRoom = (req, res) => {
-    if (rooms === {}) {
-        res.status(200).send({message: false});
-        return false;
-    }
+const findRoom = async (req, res) => {
     const { roomKey } = req.body;
-
-    if (roomKey in rooms) {
-        res.status(200).send({message: true});
-        return true;
+    try {
+        const response = await Room.findOne( {roomKey: roomKey} );
+        if (response) {
+            res.status(200).send({message: true});
+        } else {
+            res.status(200).send({message: "Room does not exist"});
+        }
+    } catch (err) {
+        res.status(404).send({message: "Connection Error has occured"});
     }
-
-    res.status(200).send({message: false});
-    return false;
 }
 
 const getPlayerState = (req, res) => {
