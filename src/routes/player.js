@@ -76,7 +76,7 @@ const findPlayer = async (req, res) => {
                 player1: {state: "Idle"},
                 player2: {state: "Idle"}
             } );
-            res.status(200).send( {message: `Room: ${roomKey} was created`} );
+            res.status(200).send( {message: true} );
         } else {
             res.status(404).send( {message: "Room was not found"} );
         }
