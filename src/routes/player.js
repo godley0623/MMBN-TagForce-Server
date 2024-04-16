@@ -125,24 +125,6 @@ const deleteRoom = async (req, res) => {
 }
 
 const updateRoom = async (req, res) => {
-    // const { roomKey, player, type, data } = req.body;
-    // let d;
-
-    // if (roomKey in rooms) {
-    //     if (data.includes("int[]")){
-    //         let stringData = data.slice(5);
-    //         let arrayData = stringData.split(",");
-    //         for (let i = 0; i<arrayData.length; i++) {
-    //             arrayData[i] = Number(arrayData[i]);
-    //         }
-    //         d = arrayData;
-    //     }
-    //     rooms[roomKey][player][type] = d;
-    //     res.status(200).send( {message: "room updated"} );
-    // } else {
-    //     res.status(200).send( {message: "room not found"} );
-    // }
-
     const { roomKey, player, type, data } = req.body;
     let d;
     try {
@@ -166,17 +148,15 @@ const updateRoom = async (req, res) => {
     }
 }
 
-const characterCheck = (req, res) => {
+const characterCheck = async (req, res) => {
     const { roomKey, player } = req.body;
-
-    if (roomKey in rooms) {
-        if ("characters" in rooms[roomKey][player]) {
+    try {
+        const response = await Room.findOne( {roomKey: roomKey} );
+        if (response[roomKey][player]["characters"].length > 0) {
             res.status(200).send( {message: true} );
-        } else {
-            res.status(200).send( {message: false} );
         }
-    } else {
-        res.status(200).send( {message: "room does not exist"} );
+    } catch (err) {
+        res.status(404).send( {message: "Connection Error occured"} );
     }
 }
 
