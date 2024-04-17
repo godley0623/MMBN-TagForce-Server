@@ -7,7 +7,7 @@ dotenv.config()
 
 
 const DATABASE_URI = process.env.DATABASE_URI
-const ENVIRONMENT = process.argv[2] || process.env.ENVIRONMENT
+const ENVIRONMENT = process.env.ENVIRONMENT
 
 
 // Setup database
