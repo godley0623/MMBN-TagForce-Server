@@ -23,11 +23,12 @@ let mongooseConfig = {
 
 if (ENVIRONMENT === "prod") {
     mongoose.connect(DATABASE_URI, mongooseConfig)
-    
+    console.log(`Connected to: ${DATABASE_URI}`);
 }
 // Connect to your local db
 else {
     mongoose.connect(`mongodb://127.0.0.1:27017`, mongooseConfig)
+    console.log(`Connected to: Local MongoDB`);
 }
 
 export default db
