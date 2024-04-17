@@ -20,7 +20,7 @@ let mongooseConfig = {
     useUnifiedTopology: true
 }
 
-
+console.log(`Environment: ${ENVIRONMENT}`);
 if (ENVIRONMENT === "prod") {
     mongoose.connect(DATABASE_URI, mongooseConfig)
     console.log(`Connected to: ${DATABASE_URI}`);
