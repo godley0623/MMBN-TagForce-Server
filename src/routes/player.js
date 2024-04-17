@@ -152,8 +152,11 @@ const characterCheck = async (req, res) => {
     const { roomKey, player } = req.body;
     try {
         const response = await Room.findOne( {roomKey: roomKey} );
-        if (response[player]["characters"].length > 0) {
-            res.status(200).send( {message: true} );
+        const characters = response[player]["characters"];
+        if (characters.length > 0) {
+            res.status(200).send( {message: true, characters: characters} );
+        } else {
+            res.status(200).send( {message: false} );
         }
     } catch (err) {
         res.status(404).send( {message: "Connection Error occured"} );
