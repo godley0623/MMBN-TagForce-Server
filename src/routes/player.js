@@ -104,6 +104,7 @@ const updatePlayerState = async (req, res) => {
         res.status(200).send( {message: "player state updated", room: response} )
     } catch (err) {
         res.status(404).send( {message: "player state did not update"} )
+        console.log(err);
     }
 }
 
