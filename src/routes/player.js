@@ -85,8 +85,8 @@ const getPlayerState = async (req, res) => {
     try {
         const response = await Room.findOne( {roomKey: roomKey} );
         const playerState = {
-            "player1": response[roomKey]["player1"]["state"],
-            "player2": response[roomKey]["player2"]["state"]
+            "player1": response["player1"]["state"],
+            "player2": response["player2"]["state"]
         };
         res.status(200).send( {message: "state", states: playerState} );
     } catch (err) {
