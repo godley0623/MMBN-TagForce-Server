@@ -220,7 +220,7 @@ const startWebSocket = async (req, res) => {
 
         res.status(200).send( {message: `Socket.io server running on port ${port}`} );
     } catch (err) {
-        res.status(404).send( {message: "Couldn't start the Socket.io server"} );
+        res.status(404).send( {message: "Couldn't start the Socket.io server", error: err} );
     }
 }
 
