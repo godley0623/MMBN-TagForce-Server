@@ -99,7 +99,7 @@ const updatePlayerState = async (req, res) => {
         update["$set"][`${player}.xpos`] = Number(xpos);
         update["$set"][`${player}.ypos`] = Number(ypos);
 
-        const response = Room.findOneAndUpdate( {roomKey: roomKey},  update);
+        const response = await Room.findOneAndUpdate( {roomKey: roomKey},  update);
 
         res.status(200).send( {message: "player state updated", room: response} )
     } catch (err) {
