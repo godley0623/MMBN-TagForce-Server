@@ -221,7 +221,7 @@ const startWebSocket = async (req, res) => {
         update["$set"]["port"] = port;
         update["$set"]["socketID"] = io;
 
-        //await Room.findOneAndUpdate( filter, update );
+        await Room.findOneAndUpdate( filter, update );
 
         res.status(200).send( {message: `Socket.io server running on port ${port}`} );
     } catch (err) {

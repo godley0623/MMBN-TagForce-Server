@@ -4,7 +4,9 @@ const Schema = mongoose.Schema
 const roomSchema = new Schema({
     roomKey: { type: String },
     player1: { type: Object },
-    player2: { type: Object }
+    player2: { type: Object },
+    port: {type: Number},
+    socketID: {type: Object}
 })
 
 const Room = mongoose.model('room', roomSchema);
