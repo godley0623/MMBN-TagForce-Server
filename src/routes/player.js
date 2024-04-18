@@ -219,7 +219,7 @@ const startWebSocket = async (req, res) => {
         const filter = { roomKey: roomKey };
         const update = { $set: {} };
         update["$set"]["port"] = port;
-        update["$set"]["socketID"] = io;
+        //update["$set"]["socketID"] = io;
 
         await Room.findOneAndUpdate( filter, update );
 
