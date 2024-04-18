@@ -205,18 +205,18 @@ const startWebSocket = async (req, res) => {
         const server = createServer();
         const io = new Server(server);
 
-        io.on('connection', (socket) => {
-            console.log('A user connected');
-            socket.on('disconnect', () => {
-                console.log('User disconnected');
-            });
-        });
+        // io.on('connection', (socket) => {
+        //     console.log('A user connected');
+        //     socket.on('disconnect', () => {
+        //         console.log('User disconnected');
+        //     });
+        // });
 
-        server.listen(port, () => {
-            console.log(`Socket.io server running on port ${port}`);
-        });
+        // server.listen(port, () => {
+        //     console.log(`Socket.io server running on port ${port}`);
+        // });
 
-        Room.findOneAndUpdate( {roomKey: roomKey}, {port: port, socketID: io} );
+        Room.findOneAndUpdate( {roomKey: roomKey}, { $set: { port: port, socketID: io } } );
 
         res.status(200).send( {message: `Socket.io server running on port ${port}`} );
     } catch (err) {
