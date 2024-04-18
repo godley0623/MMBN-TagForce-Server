@@ -2,6 +2,9 @@ import express from 'express';
 import Player from "../models/player.js";
 import Room from "../models/room.js";
 
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+
 export const router = express.Router();
 const players = {};
 const rooms = {};
@@ -185,6 +188,58 @@ const getPlayerData = (req, res) => {
     }
 }
 
+const startWebSocket = async (req, res) => {
+    try{
+        const { roomKey } = req.body;
+        let port = 4001
+        let portNotFound = false;
+        while(!portNotFound) {
+            const rooms = await Room.find( {port: port} );
+            if (rooms.length > 0) {
+                port++;
+            } else {
+                portNotFound = true;
+            }
+        }
+
+        const server = createServer();
+        const io = new Server(server);
+
+        io.on('connection', (socket) => {
+            console.log('A user connected');
+            socket.on('disconnect', () => {
+                console.log('User disconnected');
+            });
+        });
+
+        server.listen(port, () => {
+            console.log(`Socket.io server running on port ${port}`);
+        });
+
+        Room.findOneAndUpdate( {roomKey: roomKey}, {port: port, socketID: io} );
+
+        res.status(200).send( {message: `Socket.io server running on port ${port}`} );
+    } catch (err) {
+        res.status(404).send( {message: "Couldn't start the Socket.io server"} );
+    }
+}
+
+const closeWebSocket = async (req, res) => {
+    try {
+        const { roomKey } = req.body;
+        const response = await Room.findOne( {roomKey: roomKey} );
+        const io = response["socketID"];
+
+        io.close(() => {
+            console.log('Socket.io server closed');
+        });
+
+        res.status(200).send( {message: 'Socket.io server closed'} )
+    } catch (err) {
+        res.status(404).send( {message: "Connect Error has occured"} )
+    }
+}
+
 router.get("/getAllPlayers", getAllPlayers);
 router.get("/getAllRooms", getAllRooms);
 router.post("/getState", getPlayerState);
@@ -197,3 +252,5 @@ router.post("/updateRoom", updateRoom);
 router.post('/updateState', updatePlayerState);
 router.post("/deletePlayer", deletePlayer);
 router.post("/deleteRoom", deleteRoom);
+router.post("/startWebSocket", startWebSocket);
+router.post("/closeWebSocket", closeWebSocket);
