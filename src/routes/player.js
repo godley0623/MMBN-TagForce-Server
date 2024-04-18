@@ -223,7 +223,7 @@ const startWebSocket = async (req, res) => {
 
         await Room.findOneAndUpdate( filter, update );
 
-        res.status(200).send( {message: `Socket.io server running on port ${port}`, io: io} );
+        res.status(200).send( {message: `Socket.io server running on port ${port}`} );
     } catch (err) {
         res.status(404).send( {message: "Couldn't start the Socket.io server", error: err} );
     }
