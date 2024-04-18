@@ -80,28 +80,30 @@ const findRoom = async (req, res) => {
 }
 
 const getPlayerState = async (req, res) => {
-    const { roomKey } = req.body;
+    const { roomKey, player } = req.body;
 
     try {
         const response = await Room.findOne( {roomKey: roomKey} );
-        const playerState = {
-            "player1": response["player1"]["state"],
-            "player2": response["player2"]["state"]
-        };
-        res.status(200).send( {message: "state", states: playerState} );
+        res.status(200).send( {message: "state", state: response[player]} );
     } catch (err) {
         res.status(404).send( {message: false} );
     }
 }
 
-const updatePlayerState = (req, res) => {
-    const { roomKey, player, state } = req.body;
+const updatePlayerState = async (req, res) => {
+    const { roomKey, player, state, xpos, ypos } = req.body;
     
-    if (roomKey in rooms) {
-        rooms[roomKey][player]["state"] = state;
-        res.status(200).send( {message: "player updated"} );
-    } else {
-        res.status(200).send( {message: "room not found"} );
+    try {
+        const update = { $set: {} };
+        update["$set"][`${player}.state`] = state;
+        update["$set"][`${player}.xpos`] = Number(xpos);
+        update["$set"][`${player}.ypos`] = Number(ypos);
+
+        const response = Room.findOneAndUpdate( {roomKey: roomKey},  update);
+
+        res.status(200).send( {message: "player state updated", room: response} )
+    } catch (err) {
+        res.status(404).send( {message: "player state did not update"} )
     }
 }
 
@@ -136,7 +138,12 @@ const updateRoom = async (req, res) => {
                 arrayData[i] = Number(arrayData[i]);
             }
             d = arrayData;
-        } else {
+        } else if (data.includes("int")) {
+            let stringData = data.slice(3);
+            let numData = Number(stringData);
+            d = numData
+        } 
+        else {
             d = data;
         }
 
