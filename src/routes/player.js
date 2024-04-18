@@ -79,17 +79,18 @@ const findRoom = async (req, res) => {
     }
 }
 
-const getPlayerState = (req, res) => {
+const getPlayerState = async (req, res) => {
     const { roomKey } = req.body;
 
-    if (roomKey in rooms) {
+    try {
+        const response = await Room.findOne( {roomKey: roomKey} );
         const playerState = {
-            "player1": rooms[roomKey]["player1"]["state"],
-            "player2": rooms[roomKey]["player2"]["state"]
+            "player1": response[roomKey]["player1"]["state"],
+            "player2": response[roomKey]["player2"]["state"]
         };
-        res.status(200).send(playerState);
-    } else {
-        res.status(200).send( {message: "failed"} );
+        res.status(200).send( {message: true, states: playerState} );
+    } catch (err) {
+        res.status(404).send( {message: false} );
     }
 }
 
@@ -135,6 +136,8 @@ const updateRoom = async (req, res) => {
                 arrayData[i] = Number(arrayData[i]);
             }
             d = arrayData;
+        } else {
+            d = data;
         }
 
         const filter = { roomKey: roomKey };
