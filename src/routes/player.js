@@ -204,28 +204,30 @@ const startWebSocket = async (req, res) => {
 
         const server = createServer();
         const io = new Server(server);
+        io.eio.pingTimeout = 240000; // 4 minutes
+        io.eio.pingInterval = 5000;  // 5 seconds
 
-        // io.on('connection', (socket) => {
-        //     console.log('A user connected');
-        //     socket.on('disconnect', () => {
-        //         console.log('User disconnected');
-        //     });
-        // });
+        io.on('connection', (socket) => {
+            console.log('A user connected');
+            socket.on('disconnect', () => {
+                console.log('User disconnected');
+            });
+        });
 
-        // server.listen(port, () => {
-        //     console.log(`Socket.io server running on port ${port}`);
-        // });
+        server.listen(port, () => {
+            console.log(`Socket.io server running on port ${port}`);
+        });
 
         const filter = { roomKey: roomKey };
         const update = { $set: {} };
         update["$set"]["port"] = port;
-        //update["$set"]["socketID"] = io;
 
         await Room.findOneAndUpdate( filter, update );
 
-        res.status(200).send( {message: `Socket.io server running on port ${port}`} );
+        res.status(200).send( {message: `startWebSocket`, port: port, status: `Socket.io server running on port ${port}`} );
     } catch (err) {
-        res.status(404).send( {message: "Couldn't start the Socket.io server", error: err} );
+        res.status(404).send( {message: "Couldn't start the Socket.io server"} );
+        console.error(err);
     }
 }
 
