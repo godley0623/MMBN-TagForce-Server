@@ -204,7 +204,7 @@ const startWebSocket = async (req, res) => {
 
         const server = createServer();
         const io = new Server(server);
-        io.eio.pingTimeout = 240000; // 4 minutes
+        io.eio.pingTimeout = 360000; // 6 minutes
         io.eio.pingInterval = 5000;  // 5 seconds
 
         io.on('connection', (socket) => {
@@ -224,10 +224,23 @@ const startWebSocket = async (req, res) => {
 
         await Room.findOneAndUpdate( filter, update );
 
-        res.status(200).send( {message: `startWebSocket`, port: port, status: `Socket.io server running on port ${port}`} );
+        res.status(200).send( {message: `Socket.io server running on port ${port}`} );
     } catch (err) {
         res.status(404).send( {message: "Couldn't start the Socket.io server"} );
         console.error(err);
+    }
+}
+
+const getPort = async (req, res) => {
+    try {
+        const { roomKey } = req.body;
+
+        const room = await Room.findOne( {roomKey: roomKey} );
+        const port = room["port"];
+
+        res.status(200).send( {message: "getPort", port: port} );
+    } catch (err) {
+        res.status(404).send( {message: "Cannot get port"} );
     }
 }
 
@@ -259,5 +272,6 @@ router.post("/updateRoom", updateRoom);
 router.post('/updateState', updatePlayerState);
 router.post("/deletePlayer", deletePlayer);
 router.post("/deleteRoom", deleteRoom);
+router.post("/getPort", getPort);
 router.post("/startWebSocket", startWebSocket);
 router.post("/closeWebSocket", closeWebSocket);
